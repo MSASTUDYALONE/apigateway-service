@@ -13,19 +13,33 @@ spring:
     name: apigateway-service
   cloud:
     gateway:
+      default-filters:
+        - name: GlobalFilter #GlobalFilter클래스 이름
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true
       routes:
         - id: first-service
           uri: http://localhost:8081/
           predicates:
             - Path=/first-service/**
           filters:
-            - AddRequestHeader=first-request, first-request-header2
-            - AddResponseHeader=first-response, first-response-header2
+#            - AddRequestHeader=first-request, first-request-header2
+#            - AddResponseHeader=first-response, first-response-header2
+            - CustomFilter
+
 
         - id: second-service
           uri: http://localhost:8082/
           predicates:
           - Path=/second-service/**
           filters:
-            - AddRequestHeader=second-request, second-request-header2
-            - AddResponseHeader=second-response, second-response-header2
+#            - AddRequestHeader=second-request, second-request-header2
+#            - AddResponseHeader=second-response, second-response-header2
+            - CustomFilter
+            - name: LoggingFilter # 추가적인 파라미터를 넣고 싶다면 "name:"을 넣어야 한다.
+              args:
+                baseMessage: Hi, there.
+                preLogger: true
+                postLogger: true
