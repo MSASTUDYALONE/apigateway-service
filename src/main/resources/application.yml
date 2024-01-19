@@ -20,6 +20,14 @@ spring:
             preLogger: true
             postLogger: true
       routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+        - id: catalog-service
+          uri: lb://CATALOG-SERVICE
+          predicates:
+            - Path=/catalog-service/**
         - id: first-service
           uri: lb://MY-FIRST-SERVICE # 마이크로 서비스 이름을 넣어주면 됨..
           predicates:
@@ -33,7 +41,7 @@ spring:
         - id: second-service
           uri: lb://MY-SECOND-SERVICE
           predicates:
-          - Path=/second-service/**
+            - Path=/second-service/**
           filters:
 #            - AddRequestHeader=second-request, second-request-header2
 #            - AddResponseHeader=second-response, second-response-header2
