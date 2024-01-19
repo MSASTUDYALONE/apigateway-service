@@ -28,6 +28,10 @@ spring:
           uri: lb://CATALOG-SERVICE
           predicates:
             - Path=/catalog-service/**
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/**
         - id: first-service
           uri: lb://MY-FIRST-SERVICE # 마이크로 서비스 이름을 넣어주면 됨..
           predicates:
