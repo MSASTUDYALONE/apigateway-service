@@ -26,8 +26,9 @@ spring:
             - Path=/user-service/login
             - Method=POST
           filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie # remove요청이 되어 있는 header값을 삭제.. -> POST로 전달되는 데이터 값을 매번 새로운 데이터처럼 인식하기 위해서 request header값을 초기화
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment} # /user-service/{?<segment>.*}를 /$\{segment}로 변경
+            #            # user-sevice에 요청되는 정보값을 filter적용하여 uri를 다시 작성해서 전달한다..
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
@@ -44,30 +45,16 @@ spring:
           filters:
             - RemoveRequestHeader=Cookies
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-
-#        - id: user-service
-#          uri: lb://USER-SERVICE
-#          predicates:
-#            - Path=/user-service/**
-
-        #        - id: user-service
-        #          uri: lb://USER-SERVICE
-        #          predicates:
-        #            - Path=/user-service/login
-        #            - Method=POST
-        #          filters:
-        #            - RemoveRequestHeader=Cookies # remove요청이 되어 있는 header값을 삭제.. -> POST로 전달되는 데이터 값을 매번 새로운 데이터처럼 인식하기 위해서 request header값을 초기화
-        #            - RewritePath=/user-service/(?<segment>.*), /$\{segment} # /user-service/{?<segment>.*}를 /$\{segment}로 변경
-        #            # user-sevice에 요청되는 정보값을 filter적용하여 uri를 다시 작성해서 전달한다..
-        #
-        #        - id: user-service
-        #          uri: lb://USER-SERVICE
-        #          predicates:
-        #            - Path=/user-service/login
-        #            - Method=GET
-        #          filters:
-        #            - RemoveRequestHeader=Cookies
-        #            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/welcome
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookies
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+#            - AuthorizationHeaderFilter
 
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
@@ -99,3 +86,6 @@ spring:
                 baseMessage: Hi, there.
                 preLogger: true
                 postLogger: true
+
+token:
+  secret: user_token # 어떤 키를 가지고 생성할 것인지(임의값 넣기)
