@@ -55,6 +55,16 @@ spring:
             - RemoveRequestHeader=Cookies
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 #            - AuthorizationHeaderFilter
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+            - Method=GET, POST
+          filters:
+            - RemoveRequestHeader=Cookies
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+
 
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
@@ -87,5 +97,13 @@ spring:
                 preLogger: true
                 postLogger: true
 
-token:
-  secret: user_token # 어떤 키를 가지고 생성할 것인지(임의값 넣기)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, http-trace
+
+
+#token:
+#  secret: user_token # 어떤 키를 가지고 생성할 것인지(임의값 넣기)
