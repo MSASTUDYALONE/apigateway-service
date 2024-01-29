@@ -11,7 +11,14 @@ eureka:
 spring:
   application:
     name: apigateway-service
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
   cloud:
+    refresh:
+      extra-refreshable: com.zaxxer.hikari.HikariDataSource
     gateway:
       default-filters:
         - name: GlobalFilter #GlobalFilter클래스 이름
@@ -59,7 +66,7 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/actuator/**
-            - Method=GET, POST
+            - Method=GET,POST
           filters:
             - RemoveRequestHeader=Cookies
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
@@ -102,7 +109,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, http-trace
+        include: refresh, health, beans, httptrace, busrefresh
 
 
 #token:
