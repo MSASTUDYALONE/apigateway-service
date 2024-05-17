@@ -9,6 +9,8 @@ eureka:
       defaultZone: http://localhost:8761/eureka
 
 spring:
+#  profiles:
+#    active: native
   application:
     name: apigateway-service
   rabbitmq:
@@ -30,7 +32,7 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/login
+            - Path=/user-service/login # 로그인
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie # remove요청이 되어 있는 header값을 삭제.. -> POST로 전달되는 데이터 값을 매번 새로운 데이터처럼 인식하기 위해서 request header값을 초기화
@@ -39,7 +41,7 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/users
+            - Path=/user-service/users # 회원가입
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
@@ -52,7 +54,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookies
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
+#            - AuthorizationHeaderFilter
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
@@ -109,8 +111,9 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, httptrace, busrefresh
+        include: refresh, health, beans, httptrace, busrefresh, info, metrics, prometheus
 
-
+#
 #token:
-#  secret: user_token # 어떤 키를 가지고 생성할 것인지(임의값 넣기)
+#  expiration_time: 86400000
+#  secret: user_token
